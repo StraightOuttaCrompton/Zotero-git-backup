@@ -1,0 +1,600 @@
+arXiv:2002.05196v1 [cs.AI] 12 Feb 2020
+
+Archimedean Choice Functions
+An Axiomatic Foundation for Imprecise Decision Making
+Jasper De Bock
+FLip, ELIS, Ghent University, Belgium jasper.debock@ugent.be
+Abstract If uncertainty is modelled by a probability measure, decisions are typically made by choosing the option with the highest expected utility. If an imprecise probability model is used instead, this decision rule can be generalised in several ways. We here focus on two such generalisations that apply to sets of probability measures: E-admissibility and maximality. Both of them can be regarded as special instances of so-called choice functions, a very general mathematical framework for decision making. For each of these two decision rules, we provide a set of necessary and sufﬁcient conditions on choice functions that uniquely characterises this rule, thereby providing an axiomatic foundation for imprecise decision making with sets of probabilities. A representation theorem for Archimedean choice functions in terms of coherent lower previsions lies at the basis of both results.
+Keywords: E-admissibility · Maximality · Archimedean choice functions · Decision Making · Imprecise probabilities.
+1 Introduction
+Decision making under uncertainty is typically carried out by combining an uncertainty model with a decision rule. If uncertainty is modelled by a probability measure, the by far most popular such decision rule is maximising expected utility, where one chooses the option—or makes the decision—whose expected utility with respect to this probability measure is the highest.
+Uncertainty can also be modelled in various other ways though. The theory of imprecise probabilities, for example, offers a wide range of extensions of probability theory that provide more ﬂexible modelling possibilities, such as differentiating between stochastic uncertainty and model uncertainty. The most straightforward such extension is to consider a set of probability measures instead of a single one, but one can also use interval probabilities, coherent lower previsions, sets of desirable gambles, belief functions, to name only a few.
+For all these different types of uncertainty models, various decision rules have been developed, making the total number of possible combinations rather daunting. Choosing which combination of uncertainty model and decision rule to use is therefore difﬁcult and often dealt with in a pragmatic fashion, by using a combination that one is familiar with, that is convenient or that is computationaly advantageous.
+
+2
+
+Jasper De Bock
+
+To motivate the use of a speciﬁc combination in a more principled way, one can also consider its properties. That is, one can aim to select an uncertainty model and decision rule whose resulting decisions satisfy the properties that one ﬁnds desirable for the decision problem at hand. In some cases, imposing a given set of properties as axioms can even rule out all combinations but one, thereby providing an axiomatic foundation for the use of a speciﬁc type of uncertainty model and decision rule. The famous work of Savage [6], for example, provides an axiomatic foundation for maximising expected utility with respect to a probability measure.
+The main contributions of this paper are axiomatic foundations for three speciﬁc decision rules that make use of imprecise probability models [8]. The ﬁrst two decision rules, called E-admissibility and maximality, apply to a set of probability measures; they both reduce to maximising expected utility when this set contains only a single probability measure, but are otherwise fundamentally different. The third decision rule applies to sets of coherent lower previsions; it is more abstract then the other two, but includes both of them as special cases. This allows us to use our axiomatic foundation for the third rule as an intermediate step towards axiomatising E-admissibility and maximality.
+To obtain our results, we make extensive use of choice functions [7,9]: a unifying framework for studying decision making. These choice functions require no reference to an uncertainty model or a decision rule, but are simply concerned with the decisions themselves, making them an excellent tool for comparing different methods. We will be especially interested in Archimedean choice functions, because all of the decision schemes that we consider are of this particular type.
+
+2 Choice Functions and Uncertainty Models
+A choice function C, quite simply, is a function that chooses. Speciﬁcally, for every ﬁnite set A of options, it returns a subset C(A) of A. We here consider the special case where options are gambles: bounded real functions on some ﬁxed state space X . We let L be the set of all gambles on X and we use Q to denote the set of all ﬁnite subsets of L , including the empty set. A choice function C is then a map from Q to Q such that, for all A ∈ Q, C(A) ⊆ A.
+If C(A) contains only a single option u, this means that u is chosen from A. If C(A) consists of multiple options, several interpretations can be adopted. On the one hand, this can be taken to mean that each of the options in C(A) is chosen. On the other hand, C(A) can also be regarded as a set of options among which it is not feasible to choose, in the sense that they are incomparable based on the available information; in other words: the elements of A \ C(A) are rejected, but those in C(A) are not necessarily ‘chosen’. While our mathematical results further on do not require a philosophical stance in this matter, it will become apparent from our examples and interpretation that we have the later approach in mind.
+A very popular class of choice functions—while not necessarily always called as such—are those that correspond to maximising expected utility. The idea there is to consider a probability measure P and to let C(A) be the element(s) of A whose expected value—or utility—is highest. The probability measure in question is often taken to
+
+Archimedean Choice Functions
+
+3
+
+be countably additive, but we will not impose this restriction here, and impose only ﬁnite additivity. These ﬁnitely additive probability measures are uniquely characterised by their corresponding expectation operators, which are linear real functionals on L that dominate the inﬁnum operator. We follow de Finetti in denoting these expectation operators by P as well, and in calling them linear previsions [4,10].
+
+Deﬁnition 1 (Linear prevision). A linear prevision P on L is a real-valued map on L that satisﬁes
+
+P1. P(u ) ≥ inf u for all u ∈ L ; P2. P(λ u) = λ P(u) for all real λ and u ∈ L ; P3. P(u + v) = P(u) + P(v) for all u, v ∈ L .
+We denote the set of all linear previsions on L by P.
+
+boundedness homogeneity
+additivity
+
+For any such linear prevision—or equivalently, any ﬁnitely additive probability measure—the choice function obtained by maximising expected utility is deﬁned by
+
+CP(A) := u ∈ A : (∀v ∈ A \ {u}) P(u) ≥ P(v) for all A ∈ Q.
+
+(1)
+
+It returns the options u in A that have the highest prevision—or expectation—P(u). However, there are also many situations in which it is not feasible to represent un-
+certainty by a single prevision or probability measure [10, Section 1.4.4]. In those cases, imprecise probability models can be used instead. The most straightforward such imprecise approach is to consider a non-empty set P ⊆ P of linear previsions—or probability measures—as uncertainty model, the elements of which are regarded as candidates for some ‘true’ but unknown precise model.
+In that context, maximising expected utility can be generalised in several ways [8], of which we here consider two. The ﬁrst is called E-admissibility; it chooses those options that maximise expected utility with respect to at least one precise model in P:
+
+CPE (A) := u ∈ A : (∃P ∈ P) (∀v ∈ A \ {u}) P(u) ≥ P(v) for all A ∈ Q. (2)
+
+The second generalisation is called maximality and starts from a partial order on the elements of A. In particular, for any two options u, v ∈ A, the option u is deemed better than v if its expectation is higher for every P ∈ P. Decision making with maximality then consists in choosing the options u in A that are undominated in this order, in the sense that no other option v ∈ A is better than u:
+
+CPM(A) := u ∈ A : (∀v ∈ A \ {u}) (∃P ∈ P) P(u) ≥ P(v) for all A ∈ Q. (3)
+
+If P contains only a single linear prevision, it can easily be seen that maximality and E-admissibility coincide and both reduce to maximising expected utility. In all other cases, however, these two approaches are different; see for example Proposition 3 in Section 9 for a formal statement.
+One of the main aims of this paper is to characterise each of these two types of choice functions in terms of their properties. That is, we are looking for necessary and sufﬁcient conditions under which a general choice function C is of the form CPE or CPM,
+
+4
+
+Jasper De Bock
+
+without assuming a priory the existence of a set of linear previsions P. Such conditions will be presented in Section 7 and 8, respectively.
+A crucial intermediate step in obtaining these two results will consist in ﬁnding a similar characterisation for choice functions that correspond to (sets of) coherent lower previsions [10], a generalisation of linear previsions that replaces additivity by the weaker property of superadditivity.
+
+Deﬁnition 2 (Coherent lower prevision). A coherent lower prevision P on L is a real-valued map on L that satisﬁes
+
+LP1. P(u) ≥ inf u for all u ∈ L ; LP2. P(λ u) = λ P(u) for all real λ > 0 and u ∈ L ; LP3. P(u + v) ≥ P(u) + P(v) for all u, v ∈ L .
+
+boundedness positive homogeneity
+superadditivity
+
+We denote the set of all coherent lower previsions on L by P.
+
+That linear previsions are a special case of coherent lower previsions follows trivially from their deﬁnitions. There is however also a more profound connection between both concepts: coherent lower previsions are minima of linear ones.
+
+Theorem 1. [10, Section 3.3.3.] A real-valued map P on L is a coherent lower prevision if and only if there is a non-empty set P ⊆ P of linear previsions such that
+
+P(u) = min{P(u) : P ∈ P} for all u ∈ L .
+
+Alternatively, coherent lower previsions can also be given a direct behavioural interpretation in terms of gambling, without any reference to probability measures or linear previsions [10,11].
+Regardless of their interpretation, with any given non-empty set P ⊆ P of these coherent lower previsions, we can associate a choice function CP in the following way:
+
+CP (A) := u ∈ A : (∃P ∈ P) (∀v ∈ A \ {u}) P(v − u) ≤ 0 for all A ∈ Q. (4)
+
+If the lower previsions in P are all linear, this deﬁnition reduces to E-admissibility, as can be seen by comparing Equations (2) and (4). What is far less obvious though, is that maximality is also a special case of Equation (4); see Theorem 7 in Section 8 for a formal statement. In that case, the sets P in Equations (4) and (3) may of course—and typically will—be different.
+Because the choice functions that correspond to E-admissibility and maximality are both of the form CP , with P a set of coherent lower previsions, any attempt at characterising the former will of course beneﬁt from characterising the latter. A large part of this paper will therefore be devoted to the development of necessary and sufﬁcient conditions for a general choice function C to be of the form CP . In order to obtain such conditions, we will interpret choice functions in terms of (strict) desirability and establish a connection with so-called sets of desirable option sets. This interpretation will lead to a natural set of conditions that, as we will eventually see in Section 6, uniquely characterises choice functions of the form CP . We start with a brief introduction to desirability and sets of desirable option sets.
+
+Archimedean Choice Functions
+
+5
+
+3 Coherent Sets of Desirable Option Sets
+
+The basic notion on which our interpretation for choice functions will be based, and from which our axiomatisation will eventually be derived, is that of a desirable option: an option that is strictly preferred over the status quo [1,5,10]. In our case, where options are gambles u ∈ L on X and the status quo is the zero gamble, this means that the uncertain—and possibly negative—reward u(x), whose actual value depends on the uncertain state x ∈ X , is strictly preferred over the zero reward. In other words: gambling according to u is strictly preferred over not gambling at all.
+We will impose the following three principles on desirable options, where we use ‘(λ , µ) > 0’ as a shorthand notation for ‘λ ≥ 0, µ ≥ 0 and λ + µ > 0’.1 The ﬁrst two principles follow readily from the meaning of desirability. The third one follows from an assumption that rewards are expressed in a linear utility scale.
+d1. 0 is not desirable; d2. if inf u > 0, then u is desirable; d3. if u, v are desirable and (λ , µ) > 0, then λ u + µv is desirable.
+The notion of a desirable option gives rise to two different frameworks for modelling a subject’s uncertainty about the value x ∈ X . The ﬁrst, which is well established, is that of sets of desirable options—or sets of desirable gambles. The idea there is to consider a set D that consists of options that are deemed desirable by a subject. If such a set is compatible with the principles d1–d3, it is called coherent.
+Deﬁnition 3 (Coherence for sets of desirable options). A set of desirable options D ∈ D is coherent if it satisﬁes the following axioms:
+D1. 0 ∈/ D; D2. if inf u > 0, then u ∈ D; D3. if u, v ∈ D and (λ , µ) > 0, then λ u + µv ∈ D.
+We denote the set of all coherent sets of desirable options by D.
+A more general framework, which will serve as our main workhorse in this paper, is that of sets of desirable option sets [2]. The idea here is to consider a set K of so-called desirable option sets A, which are ﬁnite sets of options that, according to our subject, are deemed to contain at least one desirable option. To say that A = {u, v} is a desirable option set, for example, means that u or v is desirable. Crucially, the framework of sets of desirable option sets allows a subject to make this statement without having to specify—or know—which of the two options u or v is desirable. As explained in earlier work [3, Section 3], it follows from d1–d3 that any set of desirable option sets K should satisfy the following axioms. If it does, we call K coherent.
+1 There is no consensus on which properties to impose on desirability; plenty of subtle variations have been considered over the years—often under different names—and continue to exist alongside each other; the main ideas and results are always very similar though [1,5,10,11]. d2 is for example often strengthened by requiring that u is desirable as soon as inf u ≥ 0 and u = 0; we here prefer d2 because it combines more easily with the notion of strict desirability that we will consider in Section 5. Simmilar comments apply to D2, K2 and sd2 further on.
+
+6
+
+Jasper De Bock
+
+Deﬁnition 4 (Coherence for sets of desirable option sets). A set of desirable option
+sets K ⊆ Q is coherent if it satisﬁes the following axioms:
+K0. if A ∈ K then also A \ {0} ∈ K, for all A ∈ Q; K1. {0} ∈/ K; K2. {u} ∈ K for all u ∈ L with inf u > 0; K3. if A1, A2 ∈ K and if, for all u ∈ A1 and v ∈ A2, (λu,v, µu,v ) > 0, then also
+
+{λu,v u + µu,vv : u ∈ A1, v ∈ A2} ∈ K; K4. if A1 ∈ K and A1 ⊆ A2, then also A2 ∈ K, for all A1, A2 ∈ Q. We denote the set of all coherent sets of desirable option sets by K.
+
+One particular way of obtaining a set of desirable option sets, is to derive it from a set of desirable options D, as follows:
+
+KD := {A ∈ Q : A ∩ D = 0/ }.
+
+(5)
+
+One can easily verify that if D is coherent, then KD will be as well [3, Proposition 8]. In general, however, sets of desirable option sets are more expressive than sets of desirable options. The link between both is provided by Theorem 2, which shows that a set of desirable option sets can be equivalently represented by a set of sets of desirable options.
+
+Theorem 2. [3, Theorem 9] A set of desirable option sets K is coherent if and only if there is some non-empty set D ⊆ D of coherent sets of desirable options such that K = {KD : D ∈ D}.
+In practice, modelling a subject’s uncertainty does not require her to specify a full coherent set of desirable option sets though. Instead, it sufﬁces for her to provide an assessment A ⊆ Q, consisting of option sets A that she considers desirable. If such an assessment is consistent with coherence, meaning that there is at least one coherent set of desirable option sets K that includes A , then this assessment can always be extended to a unique smallest—most conservative—coherent set of desirable option sets, called the natural extension of A . This natural extension is given by
+
+Ex(A ) := K ∈ K : A ⊆ K = KD : D ∈ D, A ⊆ KD ,
+
+(6)
+
+as follows readily from Theorem 2. If A is not consistent with coherence, Ex(A ) is an empty intersection, which, by convention, we set equal to Q.
+
+4 Strongly Archimedean Sets of Desirable Option Sets
+That sets of desirable option sets can be used to axiomatise choice functions of the type CP , with P a set of coherent lower previsions, was already demonstrated in earlier work [3] for the speciﬁc case where P is closed with respect to pointwise convergence. A key step in that result consisted in strengthening the interpretation of K, replacing desirability with the stronger notion of strict desirability [10, Section 3.7.7]. We here repeat the reasoning that led to this result, before adapting it in Section 5 to get rid of the closure condition.
+We call a desirable option u strictly desirable if there is some real ε > 0 such that u − ε is desirable. As a simple consequence of this deﬁnition and d1–d3, we ﬁnd that
+
+Archimedean Choice Functions
+
+7
+
+sd1. 0 is not strictly desirable; sd2. if inf u > 0, then u is strictly desirable; sd3. if u, v are strictly desirable and (λ , µ) > 0, then λ u + µv is strictly desirable; sd4. if u is strictly desirable, then u − ε is strictly desirable for some real ε > 0.
+By applying these principles to sets of desirable options, we arrive at the concept of a coherent set of strictly desirable options: a coherent set of desirable options D that is compatible with sd4. What is particularly interesting about such sets is that they are in one-to-one correspondence with coherent lower previsions [3,10], thereby allowing us to move from desirability to lower previsions as a ﬁrst step towards choice functions of the form CP . The problem with coherent sets of strictly desirable options, however, is that they correspond to a single lower prevision P, while we which to consider a set P of them. To achieve this, we again consider sets of desirable option sets, but now suitably adapted to strict desirability.
+So consider any set of desirable option sets K and let us interpret it in terms of strict desirability. That A belongs to K then means that A contains at least one strictly desirable option. Given this interpretation, what properties should K satisfy? Since the principles sd1–sd3 are identical to d1–d3, K should clearly be coherent, meaning that it should satisfy K0–K4. Formalising the implications of sd4 is more tricky though, as it can be done in several ways.
+The ﬁrst and most straighforward approach is to impose the following immediate translation of sd4 to desirable option sets, where for all A ∈ Q and real ε:
+A − ε := {u − ε : u ∈ A}
+
+Deﬁnition 5 (Strong Archimedeanity for sets of desirable option sets). A set of desirable option sets K is Strongly Archimedean if it is coherent and satisﬁes2
+
+KSA. if A ∈ K, then also A − ε ∈ K for some real ε > 0.
+The reasoning behind this axiom goes as follows. Since A ∈ K is taken to mean that there is at least one u ∈ A that is strictly desirable, it follows from sd4 that there is some real ε > 0 such that u − ε is strictly desirable. This implies that A − ε contains at least one strictly desirable option. I therefore seems sensible to impose that A − ε ∈ K.
+To explain the implications of this axiom, and how it is related to lower previsions, we need a way to link the latter to sets of desirable option sets. The ﬁrst step is to associate, with any coherent lower prevision P ∈ P, a set of desirable option sets
+
+KP := {A ∈ Q : (∃u ∈ A)P(u ) > 0},
+
+(7)
+
+The coherence of this set can be easily veriﬁed [3, Propositions 8 and 24]. More gen-
+
+erally, with any non-empty set P of coherent lower previsions, we associate a set of
+
+desirable option sets
+
+KP := {KP : P ∈ P}.
+
+(8)
+
+2 In earlier work [3], we have referred to this property as Archimedeanity. With hindsight, however, we now prefer to reserve this terminology for the property in Deﬁnition 6.
+
+8
+
+Jasper De Bock
+
+Coherence is again easily veriﬁed; it follows directly from the coherence of KP and the fact that coherence is preserved under taking intersections. The ﬁnal tool that we need to explain the implications of strong Archimedeanity, does the opposite; it starts with a coherent set of desirable option sets K, and associates a set of coherent lower previsions with it, deﬁned by
+P(K) := {P ∈ P : K ⊆ KP }.
+If K is strongly Archimedean, then as the following result shows, P(K) serves as a mathematically equivalent representation for K, from wich K can be recovered through Equation (8). The representing set P(K) will then furthermore be closed with respect to the topology induced by pointwise convergence.
+Theorem 3. [3, Theorem 28 and Proposition 24] A set of desirable option sets K is strongly Archimedean if and only if there is some non-empty closed set P ⊆ P of coherent lower previsions such that K = KP . Closure is with respect to pointwise convergence, and the largest such set P is then P(K).
+If the representing coherent lower previsions in P or P(K) were linear, this result would already brings us very close to decision rules based on sets of linear previsions— or sets of probability measures. As we will see further on in Section 7, this can be achieved by imposing an additional axiom called mixingness. Before we do so, however, we will do away with the closure condition in Theorem 3, as it is overly restrictive. Imagine for example that we are modelling a subject’s uncertainty about the outcome of a coin toss, and that she beliefs the coin to be unfair. In terms of probabilities, this would mean that her probability for heads is different from one half. Strong Archimeanity is not compatible with such an assessment, as the set of probability measures that satisfy this (strict) probability constraint is not closed. Our ﬁrst main contribution will consist in resolving this issue, by suitably modifying the notion of strong Archimedeanity.
+
+5 Archimedean Sets of Desirable Option Sets
+At ﬁrst sight, it may seem as if KSA is the only way in which sd4 can be translated to option sets. There is however also a second, far more subtle approach.
+The crucial insight on which this second approach is based is that our interpretation in terms of strict desirability does not require ε to be known; it only imposes the existence of such an ε. Consider a subject whose uncertainty is represented by a set of desirable option sets K and let us adopt an interpretation in terms of strict desirability. This implies that the option sets A ∈ K are option sets that, according to her beliefs, contain at least one strictly desirable option u ∈ A. As a consequence of sd4, this implies that she beliefs that there is some real ε > 0 such that u − ε is strictly desirable. Hence, she believes that there is some real ε > 0 such that A − ε contains at least one strictly desirable option. Strong Archimedeanity, at that point, concludes that A − ε ∈ K. However, this is only justiﬁed if our subject knows ε. If she doesn’t know ε, but only believes that there is such an ε, then there is no single ε > 0 for which she believes that A − ε contains at least one strictly desirable option. Since the option sets in K are options sets for which our subject believes that they contain at least one strictly desirable
+
+Archimedean Choice Functions
+
+9
+
+option, it follows that A ∈ K need not necessarily imply that A − ε ∈ K for some ε > 0.
+Strong Archimedeanity is therefore indeed, as its name suggests, a bit too strong for our
+purposes.
+So if we can’t infer that A − ε ∈ K, what is it then that we can infer from A ∈ K
+and sd4? As explained above, the only thing that can be inferred is that for any A ∈ K, there is some ε > 0 such that A − ε contains at least one strictly desirable option. Let us denote this speciﬁc epsilon by ε(A). Crucially, we may not know—or rather, our subject may not know—the speciﬁc value of ε(A). Nevertheless, any inferences we can make without knowing the speciﬁc value of ε(A), can and should still be made. Our approach
+will therefore consist in ﬁnding out what inferences can be made for a speciﬁc choice
+of the ε(A), to do this for every such choice, and to then only consider those inferences that can be made regardless of the speciﬁc choice of ε(A).
+To formalize this, we consider the set RK>0 of all functions ε that associate a strictly positive real ε(A) > 0 with every option set A in K. As a consequence of our interpretation, we know that there is at least one ε ∈ RK>0 such that, for every A ∈ K, A − ε(A) contains a strictly desirable option.
+Let us now assume for a minute that our subject does know for which speciﬁc ε in RK>0 this is the case. In order to be compatible with sd1–sd3, the resulting assessment
+
+Kε := {A − ε(A) : A ∈ K}
+
+(9)
+
+should then be consistent with coherence, meaning that there is at least one coherent set
+of desirable option sets that includes Kε . Whenever this is the case, then as explained in Section 3, we can use coherence to extend the assessment Kε to the unique smallest coherent set of desirable option sets that incudes it: the natural extension Ex(Kε ) of Kε . Based on the assessment Kε and coherence, each of the option sets in Ex(Kε ) must necessarily contain a strictly desirable option. Hence, still assuming for the moment
+that our subject knows ε, it follows that every option set in Ex(Kε ) should belong to K. Our subject may not know ε though; all we can infer from sd4 is that there must
+be at least one ε for which the above is true. Let us denote this speciﬁc—but possibly unkown—ε by ε∗. Then as argued above, for every option set A in Ex(Kε∗ ), it follows from our interpretation that A should also belong to K. Since we don’t know ε∗, how-
+ever, we don’t know for which option sets this is the case. What we can do though, is Ftoocr othnosisdeeorpthtioosnesoeptst,iornegsaertdslAess∈oQf wthhaetthbeerlownegktnooEwx(εK∗εo)rfnoorte,viet rtyrivpioasllsyibfloellεow∈sRtK>ha0t.
+A ∈ Ex(Kε∗ ), and therefore, that A should belong to K. Any coherent set of desirable option sets K that satisﬁes this property, we will call Archimedean.
+
+Deﬁnition 6 (Archimedeanity for sets of desirable option sets). A set of desirable option sets K is Archimedean if it is coherent and satisﬁes
+KA. for any A ∈ Q, if A ∈ Ex(Kε ) for all ε ∈ RK>0, then also A ∈ K.
+Note that Archimedeanity also rules out the possibility that Kε is inconsistent for all ε ∈ RK>0, for this would imply that K = Q, hence contradicting K1.
+By replacing strong Archimedeanity with Archimedeanity, the condition that the representing set P must be closed can be removed from Theorem 3, and we obtain a representation in terms of general sets of lower previsions.
+
+10
+
+Jasper De Bock
+
+Theorem 4. A set of desirable option sets K is Archimedean if and only if there is some non-empty set P ⊆ P of coherent lower previsions such that K = KP . The largest such set P is then P(K).
+The signiﬁcance of this result is that it relates two very different things: sets of desirable option sets and sets of coherent lower previsions. While this may not yet be obvious, this is a major step in characterising choice functions of the form CP . In fact, we are nearly there. The only thing left to do is to connect choice functions with sets of desirable option sets. As we will explain in the next section, this connection comes quite naturally once we interpret choice functions in terms of (strict) desirability.
+
+6 Archimedean Choice Functions
+
+In order to provide choice functions with an interpretation, we need to explain what
+it means for an option u to be chosen from A, or alternatively, what it means for u to be rejected from A, in the sense that u ∈/ C(A). We here adopt the latter approach. In particular, if our subject states that u ∈/ C(A), we take this to mean that she is convinced that there is at least one other option v in A \ {u} that is better that u, where ‘v is better than u’ is taken to mean that v − u is strictly desirable, or equivalently, that our subject is willing to pay a positive price ε > 0 to exchange the uncertain reward u for v.
+This interpretation has two implications for C. First, since v − u = (v − u) − 0, it immediately implies that C should be translation invariant, in the sense that
+
+u ∈ C(A) ⇔ 0 ∈ C(A − u) for all A ∈ Q and u ∈ A,
+
+(10)
+
+with A − u := {v − u : v ∈ A}. Second, for all A ∈ Q such that 0 ∈/ C(A ∪ {0}), it implies that A should contain at least one strictly desirable gamble. Indeed, if 0 ∈/ C(A ∪ {0}), then according to our interpretation, there is some v ∈ (A ∪ {0}) \ {0} ⊆ A such that v − 0 = v is strictly desirable. Hence, A indeed contains a strictly desirable option. For any choice function C, this leads us to consider the set of desirable option sets
+
+KC := A ∈ Q : 0 ∈/ C(A ∪ {0}) .
+
+(11)
+
+According to our interpretation, each of the option sets in KC contains at least one strictly desirable option. Following the discussion in Section 6, we will therefore require KC to be Archimedean. When a choice function C satisﬁes both of the conditions that are implied by our interpretation, we call it Archimedean.
+
+Deﬁnition 7. A choice function C is Archimedean if KC is Archimedean and C is translation invariant.
+
+Instead of deriving a set of desirable options sets KC from a choice function C, we can also do the converse. That is, with any set of desirable option sets K, we can associate a choice function CK, deﬁned by
+
+CK(A) := u ∈ A : A ⊖ u ∈/ K for all A ∈ Q,
+
+(12)
+
+Archimedean Choice Functions
+
+11
+
+where A ⊖ u := {v − u : v ∈ A \ {u}}. Similarly to KC, the expression for CK is motivated by our interpretation. Indeed, for any option u ∈ A, the statement that A ⊖ u ∈ K means that A ⊖ u contains a strictly desirable option, so there is some v ∈ A \ {u} such that v − u is strictly desirable. This is exactly our interpretation for u ∈/ C(A).
+If a set of desirable option sets K is Archimedean, then CK will be Archimedean as well. In fact, as our next result shows, every Archimedean choice function is of the form CK, with K an Archimedean set of desirable option sets.
+Proposition 1. Let C be a choice function. Then C is Archimedean if and only if there is an Archimedean set of desirable option sets K such that C = CK. This set K is then necessarily unique and furthermore equal to KC.
+At this point, the hard work in characterising choice functions of the form CP is done. Proposition 1 relates Archimedean choice functions to Archimedean sets of desirable option sets, while Theorem 4 relates Archimedean sets of desirable option sets to sets of coherent lower previsions P. Combining both results, we ﬁnd that a choice function is Archimedean if and only if it is of the form CP .
+Theorem 5. A choice function C is Archimedean if and only if there is a non-empty set P ⊆ P of coherent lower previsions such that C = CP . Whenever this is the case, the largest such set P is P(KC).
+Starting from this result, we will now proceed to axiomatise maximality and Eadmissibility, by combining Archimedeanity with additional axioms.
+
+7 Axiomatising E-admissibility
+Archimedeanity implies that a choice function is representable by a set of coherent lower previsions P, in the sense that is of the form CP . As can be seen by comparing Equations (4) and (2), this already brings us very close E-admissibility. Indeed, all that we need in order to obtain E-admissibility is for the lower previsions in P to be linear. That is, we would like the role of P(K) to be taken up by
+P(K) := {P ∈ P : K ⊆ KP}
+instead. To achieve this, we impose a property called mixingness on the Archimedean set of desirable option sets KC that corresponds to C. For any option set A, this property considers the set
+n
+posi(A) := ∑ λiui : n ∈ N, λi > 0, ui ∈ A , i=1
+of all positive linear combinations of the elements in A, and requires that if any of these positive linear combinations—any mixture—is strictly desirable, then A itself should contain a strictly desirable option as well.
+Deﬁnition 8 (Mixingness). A set of desirable option sets K is mixing if it satisﬁes
+KM. if B ∈ K and A ⊆ B ⊆ posi(A), then also A ∈ K, for all A, B ∈ Q;
+
+12
+
+Jasper De Bock
+
+A choice function C is called mixing if KC is.
+As the following result shows, mixingness achieves exactly what we needed: for any coherent set of desirable option sets K, it guarantees that the coherent lower previsions in P(K) are in fact linear.
+Proposition 2. Let K be a coherent set of desirable option sets that is mixing. Then for any P ∈ P(K), we have that P ∈ P. Hence, P(K) = P(K).
+By combining this result with Theorem 5, it follows readily that Archimedean choice functions that are mixing always correspond to E-admissibility. The following result formalizes this. It furthermore shows that the converse is true as well, and that the largest set of linear previsions for which this correspondence with E-admissibility holds is given by P(KC).
+Theorem 6. A choice function C is Archimedean and mixing if and only if there is a non-empty set P ⊆ P of linear previsions such that C = CPE . The largest such set P is then P(KC).
+
+8 Axiomatising Maximality
+Having axiomatised E-admissibility, we now proceed to do the same for maximality. The link with Archimedeanity is not that obvious here though, because there is no immediate connection between Equations (4) and (3). Rather than focus on how to relate these two equations, we therefore zoom in on the properties of maximality itself. One such property, which is often used to illustrate the difference with E-admissibility, is that a choice function that corresponds to maximality is completely determined by its restriction to so-called binary choices—that is, choices between two options.
+Deﬁnition 9 (Binarity). A choice function C is binary if for all A ∈ Q and u ∈ A:
+u ∈ C(A) ⇔ (∀v ∈ A \ {u}) u ∈ C({u, v})
+Inspired by this observation, we impose binarity as an additional axiom, alongside Archimedeanity. As the following result shows, these two conditions are necessary and sufﬁcient for a choice function C to be of the form CPM, hence providing an axiomatisation for decision making with maximality.
+Theorem 7. A choice function C is Archimedean and binary if and only if there is a non-empty set P ⊆ P of linear previsions such that C = CPM. The largest such set P is then P(KC).
+The formal proof of this result is rather technical, but the basic idea behind the sufﬁciency proof is nevertheless quite intuitive. First, for every u ∈ C(A), the binarity of C implies that u ∈ C({u, v}) for every v ∈ A \ {u}. For every such v ∈ A \ {u}, since C is Archimedean, Theorem 5 furthermore implies that there is a coherent lower prevision P such that P(v − u) ≤ 0. Because of Theorem 1, this in turn implies that there is a linear prevision such that P(v − u) ≤ 0 and therefore also P(u) ≥ P(v). The challenging part consist in showing that P ∈ P(KC) and establishing necessity.
+
+Archimedean Choice Functions
+
+13
+
+9 An Axiomatisation for Maximising Expectation Utility
+
+As we have seen in Sections 7 and 8, mixingness and binarity have quite a different effect on Archimedean choice functions. The former implies that they correspond to E-admissibility, while the latter leads to maximality. What is intriguing though is that the set of linear previsions P is twice the same. Indeed, as can be seen from Theorem 6 and 7, we may assume without loss of generality that this set is equal to P(KC). For a choice function C that is mixing and binary, we therefore ﬁnd that C = CPE = CPM , with P = P(KC). As the following result shows, this is only possible if P is a singleton.
+Proposition 3. Let P ⊆ P be a non-empty set of linear previsions. Then CPE = CPM if and only if P = {P} consists of a single linear prevision P ∈ P.
+As a fairly immediate consequence, we obtain the following axiomatic characterisation of choice functions that correspond to maximising expected utility.
+Theorem 8. A choice function C is Archimedean, binary and mixing if and only if there is a linear prevision P ∈ P such that C = CP.
+
+10 Conclusion and Future Work
+The main conclusion of this work is that choice functions, when interpreted in terms of (strict) desirability, can provide an axiomatic basis for decision making with sets of probability models. In particular, we were able to derive necessary and sufﬁcient conditions for a choice function to correspond to either E-admissibility or maximality. As a byproduct, we also obtained a characterisation for choice functions that correspond to maximising expected utility.
+The key concept on which these results were based is that of an Archimedean choice function, where Archimedeanity is itself a combination of several conditions. The ﬁrst of these conditions is translation invariance; this condition is fairly simple and allows for a reduction from choice functions to sets of desirable option sets. The resulting set of desirable option sets should then satisfy two more conditions: coherence and KA. Coherence is also fairly simple, because it follows directly from the principles of desirability. The condition KA, however, is more involved, making it perhaps the least intuitive component of Archimedeanity.
+The abstract character of KA is not intrinsic to the property itself though, but rather to the framework on which it is imposed. In fact, the basic principle sd4 on which KA is based is very simple: if u is strictly desirable, then there must be some positive real ε such that u − ε is strictly desirable as well. The reason why this simplicity does not translate to KA is because we restrict attention to option sets that are ﬁnite. Consider for example an assessment of the form {u} ∈ K. This means that u is strictly desirable and therefore implies, due to sd4, that the option set {u − ε : ε ∈ R>0} contains at least one strictly desirable option. Hence, we should simply impose that this set belongs to K. This is not possible though because {u − ε : ε ∈ R>0} is inﬁnite, while our framework of sets of desirable option sets only considers ﬁnite option sets.
+
+14
+
+Jasper De Bock
+
+This situation can be remedied, and the axiom of Archimedeanity can be simpliﬁed, by developing and adopting a framework of sets of desirable options that allows for inﬁnite option sets, and connecting it to a theory of choice funtions that chooses from possibly inﬁnite option sets. Explaining how this works is beyond the scope and size of the present contribution though; I intend to report on those results elsewhere.
+
+Acknowlegements. This work was funded by the BOF starting grant 01N04819 and is part of a larger research line on choice functions of Gert de Cooman and I. Within this line of research, this contribution is one of two parallel papers on Archimedean choice functions, one by each of us. My paper—this one—deals with the case where options are bounded real-valued functions, and is concerned with axiomatising Archimedean choice functions; in fact, I call a choice function Archimean if it satisﬁes those axioms. The paper of Gert deﬁnes Archimedeanity directly in terms of sets of coherent lower previsions, without providing an axiomatisation, but considers the more general case where options are elements of an abstract vector space; he extends the concept of a coherent lower prevision to this more general context an establishes links with even convexity. We would like to combine our respective results in future work.
+
+References
+1. Couso, I., Moral, S.: Sets of desirable gambles: conditioning, representation, and precise probabilities. International Journal of Approximate Reasoning 52(7), 1034–1055 (2011)
+2. De Bock, J., de Cooman, G.: A desirability-based axiomatisation for coherent choice functions. In: Uncertainty Modelling in Data Science (Proceedings of SMPS 2018). pp. 46–53 (2018)
+3. De Bock, J., de Cooman, G.: Interpreting, axiomatising and representing coherent choice functions in terms of desirability. In: Proceedings of ISIPTA 2019. PMLR, vol. 103, pp. 125–134 (2019)
+4. de Finetti, B.: Teoria delle Probabilità. Einaudi, Turin (1970) 5. Quaeghebeur, E., de Cooman, G., Hermans, F.: Accept & reject statement-based uncertainty
+models. International Journal of Approximate Reasoning 57, 69–102 (2015) 6. Savage, L.J.: The Foundations of Statistics. Dover, New York (1972), second revised edition,
+ﬁrst published 1954 7. Seidenfeld, T., Schervish, M.J., Kadane, J.B.: Coherent choice functions under uncertainty.
+Synthese 172(1), 157–176 (2010) 8. Troffaes, M.C.M.: Decision making under uncertainty using imprecise probabilities. Inter-
+national Journal of Approximate Reasoning 45(1), 17–29 (2007) 9. Van Camp, A.: Choice Functions as a Tool to Model Uncertainty. Ph.D. thesis, Ghent Uni-
+versity, Faculty of Engineering and Architecture (2018) 10. Walley, P.: Statistical Reasoning with Imprecise Probabilities. Chapman and Hall, London
+(1991) 11. Williams, P.M.: Notes on conditional previsions. Tech. rep., School of Mathematical and
+Physical Science, University of Sussex, UK (1975), revised journal version: [12] 12. Williams, P.M.: Notes on conditional previsions. International Journal of Approximate Reas-
+oning 44, 366–383 (2007), revised journal version of [11]
+
+Archimedean Choice Functions
+
+15
+
+A Proofs and Intermediate Results
+
+The deﬁning properties LP1–LP3 of a coherent lower prevision imply various additional properties as well [10, Section 2.6.1]; we will need the following two in our proofs:
+
+LP4. P(µ) = µ for all constant options µ ∈ R; LP5. P(u + µ) = P(u) + µ for all µ ∈ R and u ∈ L .
+With any coherent lower prevision P, we can also associate a corresponding coherent upper prevision P, deﬁned by
+
+P(u) := −P(−u) for all u ∈ L .
+
+Linear previsions are lower previsions for which P and P coincide.
+Proposition 4. [10, Section 2.3.6] A coherent lower prevision P on L is a linear prevision if and only P(u) = P(u) for all u ∈ L .
+
+Lemma 1. For any P ∈ P, KP is coherent.
+
+Proof. K0 and K1 hold because P(0) = 0 due to LP4. K2 holds because for any u ∈ L with inf u > 0, P(u) ≥ inf u > 0 due to LP1. Since K4 holds trivially, it remains to prove K3. So consider any A1, A2 ∈ KP and, for all u ∈ A1 and v ∈ A2, some (λu,v , µu,v) > 0. Since A1 ∈ KP , there is some u∗ ∈ A1 such that P(u∗) > 0. Similarly, there is some v∗ ∈ A2 such that P(v∗) > 0. It therefore follows from LP3 and LP2 that
+P(λu∗,v∗ u∗ + µu∗,v∗ v∗) ≥ λu∗,v∗ P(u∗) + µu∗,v∗ P(v∗) > 0,
+
+implying that
+
+{λu,v u + µu,vv : u ∈ A1, v ∈ A2} ∈ KP .
+
+⊓⊔
+
+Proposition 5. Let K be an Archimedean set of desirable option sets. Then for any option set A ∈ Q such that A ∈/ K, there is a coherent lower prevision P ∈ P(K) such that A ∈/ KP .
+Proof. Let K be an Archimedean set of desirable option sets and consider any option set A ∈ Q such that A ∈/ K.
+Since K is Archimedean, we know from Deﬁnition 6 that there is some ε ∈ RK>0 such that A ∈/ Ex(Kε ). Because of Equation (6), this in turn implies that there must be some coherent set of desirable options D ∈ D such that A ∈/ KD and Kε ⊆ KD . For this coherent set of desirable options, we now consider the corresponding coherent lower prevision P, deﬁned by
+
+P(u) := sup{µ ∈ R : u − µ ∈ D} for all u ∈ L .
+
+(13)
+
+That this functional P is indeed a coherent lower prevision is a standard result and follows easily from the coherence of D; see for example [10, Section 2.3.3]. It remains to show that A ∈/ KP and K ⊆ KP .
+
+16
+
+Jasper De Bock
+
+First assume ex absurdo that A ∈ KP . It then follows from Equation (7) that there is
+
+an option u ∈ A such that P(u) > 0. Because of Equation (13), this implies that there is
+
+some real µ > 0 such that u − µ ∈ D. Since µ > 0 and D2 imply that µ ∈ D, it therefore follows from D3 that u = (u − µ) + µ ∈ D. Since u ∈ A, this allows us to infer from
+
+Equation (5) that A ∈ KD , a contradiction. Hence, it follows that A ∈/ KP .
+
+Finally, to show that K ⊆ KP , we consider any B ∈ K and prove that B ∈ KP . Con-
+
+sider any u ∈ A. Since B ∈ K, it follows from Equation (9) that B − ε(B) ∈ Kε . Since
+
+Kε ⊆ KD , this implies that B − ε(B) ∈ KD . It therefore follows from Equation (5) that
+
+there is some v ∈ B − ε(B) such that v ∈ D, or equivalently, some u ∈ B such that
+
+u − ε(B) ∈ D. Since ε(B) > 0, it therefore follows from Equation (13) that P(u) > 0.
+
+Since u ∈ B, we infer from Equation (7) that B ∈ KP .
+
+⊓⊔
+
+Proof of Theorem 4. For the ‘only if’ part of the statement, we assume that K ∈ K is an
+
+Archimedean set of desirable option sets.
+
+For any A ∈ Q such that A ∈/ K, we know from Proposition 5 that there is some PA ∈
+P(K) such that A ∈/ KPA . Since {0} ∈/ K due to K1, this implies that P(K) is non-empty because it contains P{0}. Furthermore, since A ∈/ KPA for every A ∈/ K, with PA ∈ P(K), we also know that A ∈/ {KP : P ∈ P(K)} = KP(K) for every A ∈/ K, and therefore, that KP(K) ⊆ K. Since it follows from the deﬁnition of P(K) that also K ⊆ KP(K), we ﬁnd
+that K = KP(K). Since P(K) ⊆ P is non-empty, it follows that the ‘only if’ part of the statement holds for P = P(K).
+
+For the ‘if’ part of the statement, we consider any non-empty set P ⊆ P of coherent
+
+lower previsions such that K = KP . Since KP = {KP : P ∈ P}, it then follows that K ⊆ KP for all P ∈ P, implying that P is a subset of P(K). Hence, the largest such set P is indeed P(K). It remains to show that for any such set P, K = KP is Archimedean,
+
+which is what we now set out to do.
+
+We know from Lemma 1 that KP is coherent for every P ∈ P. Since K = KP = {KP : P ∈ P} and P is non-empty, and because coherence is clearly preserved under
+
+taking non-empty intersections, it follows that K coherent. According to Deﬁnition 6,
+
+the Archimedeanity of K therefore hinges on whether or not it satisﬁes KA. We will
+
+show that it indeed satisﬁes this property. To that end, consider any A ∈ Q such that
+
+A ∈ Ex(Kε ) for all ε ∈ RK>0. We need to prove that A ∈ K.
+
+Consider any P ∈ P and any B ∈ K = KP ⊆ KP . It then follows from Equation (7)
+
+that there is some u ∈ B such that P(u) > 0. Let ε∗(B) := P(u)/2 > 0. It then follows
+
+from LP5 that P(u − ε∗(B)) = P(u) − ε∗(B) = P(u)/2 > 0, which, since u ∈ B, implies that B − ε∗(B) ∈ KP . Since this is true for every B ∈ K, we have found some ε∗ ∈ RK>0
+
+such that Kε∗ ⊆ KP . Hence, since KP is coherent because of Lemma 1, it follows from Equation (6) that Ex(Kε∗ ) ⊆ KP . Since by assumption, A ∈ Ex(Kε ) for all ε ∈ RK>0, we therefore have in particular that A ∈ Ex(Kε∗ ) ⊆ KP . Since this is true for every P ∈ P,
+
+we conclude that A ∈ {KP : P ∈ P} = KP = K.
+
+⊓⊔
+
+Proof of Proposition 1. First assume that C is an Archimedean choice function, mean-
+ing that KC is Archimedean and C is translation invariant. Consider the Archimedean set of desirable option sets K = KC. For any A ∈ Q and u ∈ A, we then ﬁnd that
+
+u ∈ CK(A) ⇔ A ⊖ u ∈/ K ⇔ A ⊖ u ∈/ KC ⇔ 0 ∈ C (A ⊖ u) ∪ {0} ⇔ 0 ∈ C(A − u) ⇔ u ∈ C(A),
+
+Archimedean Choice Functions
+
+17
+
+using Equation (11) for the ﬁrst equivalence, Equation (12) for the third one, and trans-
+lation invariance—Equation (10)—for the last. Hence, C = CK. Next, consider any Archimedean set of desirable option sets K such that C = CK.
+First observe that CK is translation invariant because, for all A ∈ Q and u ∈ A,
+
+u ∈ CK(A) ⇔ A ⊖ u ∈/ K ⇔ (A − u) ⊖ 0 ∈/ K ⇔ 0 ∈ CK(A − u),
+
+using Equation (12) for the ﬁrst and third equivalence. Next, observe that for all A ∈ Q
+
+A ∈ KC ⇔ 0 ∈/ C(A ∪ {0}) ⇔ 0 ∈/ CK(A ∪ {0}) ⇔ (A ∪ {0}) ⊖ 0 ∈ K ⇔ A \ {0} ∈ K ⇔ A ∈ K,
+
+using Equation (11) for the ﬁrst equivalence, Equation (12) for the third equivalence
+
+and K0 and K4 for the ﬁfth one. This implies that K = KC, thereby implying that
+
+K is unique and equal to KC. Since K is Archimedean, this also implies that KC is
+
+Archimedean and therefore, since we already know that C is translation invariant, that
+
+C is Archimedean.
+
+⊓⊔
+
+Proof of Theorem 5. First assume that C is Archimedean. It then follows from Proposi-
+tion 1 that C = CK for the Archimedean set of desirable option sets K = KC. Since KC is Archimedean, it furthermore follows from Theorem 4 that KC = KP , with P = P(KC). Hence, we ﬁnd that C = CK = CKC = CKP , which is equal to CP because
+
+CKP (A) = {u ∈ A : A ⊖ u ∈/ KP } = u ∈ A : (∃P ∈ P) A ⊖ u ∈/ KP = u ∈ A : (∃P ∈ P)(∀v ∈ A \ {u}) P(v − u) ≤ 0 = CP (A) for all A ∈ Q.
+
+Conversely, consider any non-empty set P ⊆ P of coherent lower previsions such that
+
+C = CP . It then follows from the derivation above that C = CKP and from Theorem 4 that KP is Archimedean. Proposition 1 therefore implies that C is Archimedean.
+
+It remains to show that P ⊆ P(KC). To that end, consider any P ∈ P and any A ∈ KC. Since A ∈ KC, we know that 0 ∈/ C(A ∪{0}). Since C = CP , it therefore follows
+
+from Equation (4) that there is some v ∈ (A ∪ {0}) \ {0} such that 0 < P(v − 0) = P(v).
+
+Since (A ∪ {0}) \ {0} = A \ {0} ⊆ A, this implies that there is some v ∈ A such that
+
+P(v) > 0, meaning that A ∈ KP . Since A ∈ KC was arbitrary, this implies that KC ⊆ KP ,
+
+hence P ∈ P(KC). Since P ∈ P was arbitrary, we ﬁnd that P is indeed a subset of
+
+P(KC ).
+
+⊓⊔
+
+Proof of Proposition 2. Consider any P ∈ P(K) and assume ex absurdo that P ∈/ P. It then follows from Proposition 4 that there is some u ∈ L such that P(u) = P(u), or equivalently, such that P(u) + P(−u) = 0. Since we know from LP4 and LP3 that
+
+0 = P(0) = P(u − u) ≥ P(u) + P(−u),
+
+this implies that P(u) + P(−u) < 0. Let ε := −P(u) − P(−u) > 0 and deﬁne u1 := u − P(u) − ε/2 and u2 := −u + P(u) + ε. Then on the one hand, it follows from LP5 that
+
+P(u1) = P(u − P(u) − ε/2) = P(u) − P(u) − ε/2 = −ε/2 < 0
+
+18
+
+Jasper De Bock
+
+and P(u2) = P(−u + P(u) + ε) = P(−u) + P(u) + ε = 0,
+
+so {u1, u2} ∈/ KP and therefore, since K ⊆ KP , also {u1, u2} ∈/ K. On the other hand,
+
+however, since u1 + u2 = ε/2 > 0, it follows from the coherence of K—and K2 and K4 in
+
+particular—that {u1, u2, u1 +u2} ∈ K. Since {u1, u2} ⊆ {u1, u2, u1 +u2} ⊆ posi({u1, u2}),
+
+this contradicts the mixingness of K.
+
+⊓⊔
+
+Proof of Theorem 6. First assume that C is Archimedean and mixing. This implies that
+the set of desirable option sets KC is Archimedean (and hence also coherent) and mixing, and therefore, it follows from Proposition 2 that P(KC) = P(KC). Since C is Archimedean, it furthermore follows from Theorem 5 that C = CP , with P = P(KC) = P(KC) non-empty. For every A ∈ Q, this implies that
+
+CP (A) = u ∈ A : (∃P ∈ P) (∀v ∈ A \ {u}) P(v − u) ≤ 0 = u ∈ A : (∃P ∈ P) (∀v ∈ A \ {u}) P(u) ≥ P(v) = CPE (A), (14)
+
+where the crucial second equality holds because the elements of P = P(KC) are linear previsions. Hence, C = CPE .
+Consider now any non-empty set P ⊆ P of linear previsions such that C = CPE . It then follows from Equation (14) that C = CPE = CP . Since P ⊆ P ⊆ P, it therefore follows from Theorem 5 that C is Archimedean. To show that it is mixing, we consider
+any A, B ∈ Q such that B ∈ KC and A ⊆ B ⊆ posi(A). We need to prove that then also A ∈ KC. Since B ∈ KC, we know that 0 ∈/ C(B ∪ {0}) = CPE (B ∪ {0}). Consider now any P∈ P. It then follows from Equation (2) that there is some v ∈ (B ∪{0})\{0} = B \{0}
+such that P(v) > P(0) = 0, using LP4 for the last equality. Since v ∈ B \ {0} ⊆ B ⊆ posi(A), we know that v = ∑ni=1 λiui, with n ∈ N and, for all i ∈ {1, . . . , n}, λi > 0 and ui ∈ A. Since P is linear and P(v) > 0, this implies that ∑ni=1 λiP(ui) > 0. Since the coefﬁcients λi are all strictly positive, this implies that there must be some k ∈ {1, . . . , n} such that P(uk) > 0 = P(0). Since uk ∈ A, this implies that we have found some u ∈ A such that P(u) > 0. Since P(0) = 0, we also know that u = 0. Hence, u ∈ A \ {0} =
+(A ∪ {0}) \ {0} and P(u) > 0 = P(0). Since we can repeat this argument for every P ∈ P, we infer from Equation (2) that 0 ∈/ CPE (A ∪ {0}) = C(A ∪ {0}). Hence, A ∈ KC, as desired.
+It remains to show that P ⊆ P(KC). On the one hand, since C = CP and P ⊆ P ⊆ P, we know from Theorem 5 that P ⊆ P(KC). On the other hand, since C is Archimedean
+and mixing, we know that KC is Archimedean (and hence coherent) and mixing, so Proposition 2 tells us that P(KC) = P(KC). Hence, we ﬁnd that P ⊆ P(KC) = P(KC).
+⊓⊔
+
+Proposition 6. Let K be an Archimedean set of desirable option sets and consider any u ∈ L . Then {u} ∈/ K if and only if there is some P ∈ P(K) such that {u} ∈/ KP.
+Proof. First assume that {u} ∈/ K. Since K is Archimedean, it then follows from Proposition 5 that there is a coherent lower prevision P ∈ P(K) such that {u} ∈/ KP , meaning that P(u) ≤ 0. Because of Theorem 1, this implies that there is some P ∈ P such that P(u) = P(u) ≤ 0 and, for all v ∈ L , P(v) ≥ P(v). Since P(u) ≤ 0, we see that
+
+Archimedean Choice Functions
+
+19
+
+{u} ∈/ KP. The establish the ‘only if’ part of the statement, it therefore remains to prove
+
+that P ∈ P(K), or equivalently, that K ⊆ KP. To that end, consider any A ∈ K. Since
+
+P ∈ P(K), we know that K ⊆ KP and therefore, that A ∈ KP , meaning that there is some
+
+v ∈ A such that P(v) > 0. Since P(v) ≥ P(v), this implies that P(v) > 0. Hence, since
+
+v ∈ A, we ﬁnd that A ∈ KP. Since A ∈ K was arbitrary, it follows that K ⊆ KP.
+
+For the ‘if’ part of the statement, assume that there is some P∈ P(K) such that {u} ∈/
+
+KP. Since K is Archimedean, it follows from Theorem 4 that K = KP = {KP : P ∈
+
+P}, with P = P(K). Since P ∈ P(K) ⊆ P(K) = P and {u} ∈/ KP, this implies that
+
+{u} ∈/ K.
+
+⊓⊔
+
+Proof of Theorem 7. First assume that C is Archimedean and binary. Since we know
+that C is Archimedean, it follows from Proposition 1 that C = CK for the Archimedean (and hence coherent) set of desirable option sets K = KC. For any u, v ∈ L such that u = v, this implies that
+
+u ∈ C({u, v}) ⇔ u ∈ CK({u, v}) ⇔ {v − u} = {u, v} ⊖ {u} ∈/ K = KC ⇔ (∃P ∈ P(KC)) {v − u} ∈/ KP ⇔ (∃P ∈ P(KC)) P(v − u) ≤ 0 ⇔ (∃P ∈ P(KC)) P(u) ≥ P(v),
+
+using Proposition 6 for the third equivalence. Since C is binary, this implies that
+
+C(A) = u ∈ A : (∀v ∈ A \ {u}) u ∈ C({u, v})
+= u ∈ A : (∀v ∈ A \ {u})(∃P ∈ P(KC)) P(u) ≥ P(v) = CPM(KC)(A)
+for all A ∈ Q. Hence, C = CPM, with P = P(KC). To see why P(KC) is non-empty, it sufﬁces to note that {0} ∈/ KC because of K1 and the fact that KC is coherent. Indeed, it then follows from Proposition 6 that there is some P ∈ P(KC) such that {0} ∈/ KP, which implies that P(KC) is non-empty.
+Consider now any non-empty set P ⊆ P of linear previsions such that C = CPM. For all A ∈ Q and u ∈ A, it then follows from Equation (3) that
+u ∈ C(A) ⇔ u ∈ CPM(A) ⇔ (∀v ∈ A \ {u})(∃P ∈ P) P(u) ≥ P(v) ⇔ (∀v ∈ A \ {u}) u ∈ CPM({u, v})
+⇔ (∀v ∈ A \ {u}) u ∈ C({u, v}).
+
+Hence, C is binary. To show that it is also Archimedean, we consider the set
+
+P∗ :=
+
+n
+
+min
+i=1
+
+Pi
+
+:
+
+n
+
+∈
+
+N, (∀i
+
+∈
+
+{1, . . . , n}) Pi
+
+∈
+
+P
+
+of all minima of a ﬁnite number of linear previsions in P, which is clearly non-empty because P is. Due to Theorem 1, we also know that P∗ ⊆ P. We will show that CP∗ = CPM. This implies that C = CPM = CP∗ and therefore, because of Theorem 5, that C is
+Archimedean.
+Consider any A ∈ Q and any u ∈ A. First assume that u ∈ CP∗(A). This means that there is some P ∈ P∗ such that, for all v ∈ A \ {u}, P(v − u) ≤ 0. For all v ∈ A \ {u},
+
+20
+
+Jasper De Bock
+
+since P ∈ P∗, this implies that there is some P ∈ P such that P(v − u) = P(v − u) ≤ 0 and therefore also P(u) ≥ P(v). Hence, u ∈ CPM(A). Conversely, assume that u ∈ CPM(A). For all v ∈ A \ {u}, this implies that there is some Pv ∈ P such that Pv(u) ≥ Pv(v) and therefore Pv(v − u) ≤ 0. Let P = minv∈A\{u} Pv. Then P ∈ P∗ because A \ {u} is ﬁnite and, for all v ∈ A \ {u}, P(v − u) ≤ Pv(v − u) ≤ 0. Hence, u ∈ CP∗(A). We conclude that u ∈ CP∗(A) if and only if u ∈ CPM(A). Since A ∈ Q and u ∈ A are arbitrary, this implies that, indeed, CP∗ = CPM.
+It remains to show that P ⊆ P(KC). To that end, consider any P ∈ P and any A ∈ KC. Since A ∈ KC, we know that 0 ∈/ C(A ∪{0}). Since C = CPM, it therefore follows from Equation (3) that there is some v ∈ (A ∪{0})\{0} such that 0 = P(0) < P(v). Since (A ∪ {0}) \ {0} = A \ {0} ⊆ A, this implies that there is some v ∈ A such that P(v) > 0, meaning that A ∈ KP. Since A ∈ KC was arbitrary, this implies that KC ⊆ KP, hence P ∈ P(KC). Since P ∈ P was arbitrary, we ﬁnd that P is indeed a subset of P(KC). ⊓⊔
+Proof of Proposition 3. First assume that CPE = CPM . Consider any two P1, P2 ∈ P and assume ex absurdo that P1 = P2. This implies that there is some u ∈ L such that P1(u) = P2(u). Without loss of generality, we can assume that P1(u) > P2(u) (otherwise, it sufﬁces to reverse the role of P1 and P2). Let u1 := P1(u) − u and u2 := u − P2(u) and consider the set A := {0, u1, u2}. It then follows from LP5 that P1(u2) = P1(u) − P2(u) > 0, P2(u1) = P1(u) − P2(u) > 0 and from LP4 that P1(0) = P2(0) = 0. Hence, u1 = 0 and u2 = 0, so A \ {0} = {u1, u2}. LP5 and LP4 also imply that P1(u1) = 0 = P1(0) and P2(u2) = 0 = P2(0). Since P1, P2 ∈ P, it therefore follows from Equation (3) that 0 ∈ CPM(A). Since CPE = CPM , this implies that 0 ∈ CPE (A), and therefore, because of Equation (2), that there is some P ∈ P such that, for all v ∈ A \ {0} = {u1, u2}, P(0) ≥ P(v). Due to the linearity of P and LP4, this implies that
+P(u1 + u2) = P(u1) + P(u2) ≤ P(0) + P(0) = 0 + 0 = 0.
+However, since u1 + u2 = P1(u) − u + u − P2(u) = P1(u) − P2(u), LP4 also implies that
+P(u1 + u2) = P P1(u) − P2(u) = P1(u) − P2(u) > 0,
+a contradiction. Hence, it must be that P1 = P2. Since this is true for any two P1, P2 ∈ P, and since P is non-empty, this implies that P consists of a single linear prevision P ∈ P: P = {P}.
+Next, assume that there is a linear prevision P∈ P such that P = {P}. It then follows directly from Equation (2) and (3) that CPE = CPM.
+Proof of Theorem 8. First assume that C is Archimedean, binary and mixing. Let P = P(KC). Since C is Archimedean and binary, it follows from Theorem 7 that C = CPM and that P is non-empty. Since C is Archimedean and mixing, it follows from Theorem 6 that C = CPE . Hence, CPE = CPM. Since P is non-empty, it therefore follows from Proposition 3 that there is a unique linear prevision P ∈ P such that P = {P}. Equations (1) and (2) now imply that C = CPE = CP.
+Next, consider a linear prevision P ∈ P and let C = CP. Consider the set P = {P}. On the one hand, it then follows from Equations (1) and (2) that C = CP = CPE and therefore, because of Theorem 6, that C is Archimedean and mixing. On the other hand, it follows from Equations (1) and (3) that C = CP = CPM and therefore, because of Theorem 7, that C is binary.
+

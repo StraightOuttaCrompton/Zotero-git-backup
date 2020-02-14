@@ -1,0 +1,71 @@
+
+Donate to arXiv
+
+Please join the Simons Foundation and our generous member organizations in supporting arXiv during our giving campaign September 23-27. 100% of your contribution will fund improvements and new initiatives to benefit arXiv's global scientific community.
+DONATE
+
+[secure site, no need to create account]
+Skip to main content
+Cornell University
+We gratefully acknowledge support from
+the Simons Foundation and member institutions.
+arXiv.org > cs > arXiv:2002.05196
+
+Help | Advanced Search
+Search
+Download PDF
+Computer Science > Artificial Intelligence
+Title: Archimedean Choice Functions: an Axiomatic Foundation for Imprecise Decision Making
+Authors: Jasper De Bock
+(Submitted on 12 Feb 2020)
+
+    Abstract: If uncertainty is modelled by a probability measure, decisions are typically made by choosing the option with the highest expected utility. If an imprecise probability model is used instead, this decision rule can be generalised in several ways. We here focus on two such generalisations that apply to sets of probability measures: E-admissibility and maximality. Both of them can be regarded as special instances of so-called choice functions, a very general mathematical framework for decision making. For each of these two decision rules, we provide a set of necessary and sufficient conditions on choice functions that uniquely characterises this rule, thereby providing an axiomatic foundation for imprecise decision making with sets of probabilities. A representation theorem for Archimedean choice functions in terms of coherent lower previsions lies at the basis of both results. 
+
+Subjects: 	Artificial Intelligence (cs.AI)
+Cite as: 	arXiv:2002.05196 [cs.AI]
+  	(or arXiv:2002.05196v1 [cs.AI] for this version)
+Bibliographic data
+[ Enable Bibex  ( What is Bibex? )]
+Submission history
+From: Jasper De Bock [ view email ]
+[v1] Wed, 12 Feb 2020 19:44:08 UTC (88 KB)
+Full-text links:
+Download:
+
+    PDF
+    PostScript
+    Other formats
+
+( license )
+Current browse context:
+cs.AI
+< prev  |  next >
+new  | recent  | 2002
+Change to browse by:
+cs
+References & Citations
+
+    NASA ADS
+    Google Scholar
+    Semantic Scholar
+
+Export citation
+Bookmark
+BibSonomy logo Mendeley logo Reddit logo ScienceWISE logo
+Which authors of this paper are endorsers? | Disable MathJax ( What is MathJax? ) Browse v0.2.7 released 2019-12-16    Feedback?
+
+    About arXiv
+    Leadership Team
+
+    contact arXiv Click here to contact arXiv Contact
+    arXiv Twitter arXiv Twitter Follow us on Twitter
+
+    Help
+    Privacy Policy
+
+    Blog
+    Subscribe
+
+arXiv® is a registered trademark of Cornell University.
+
+If you have a disability and are having trouble accessing information on this website or need materials in an alternate format, contact web-accessibility@cornell.edu for assistance.
