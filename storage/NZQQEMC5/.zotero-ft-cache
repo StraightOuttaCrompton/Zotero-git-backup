@@ -1,0 +1,545 @@
+Fully Differentiable Procedural Content Generation through Generative Playing Networks
+
+arXiv:2002.05259v1 [cs.AI] 12 Feb 2020
+
+Philip Bontrager 1 2 Julian Togelius 1 2
+
+Abstract
+To procedurally create interactive content such as environments or game levels, we need agents that can evaluate the content; but to train such agents, we need content they can train on. Generative Playing Networks is a framework that learns agent policies and generates environments in tandem through a symbiotic process. Policies are learned using an actor-critic reinforcement learning algorithm so as to master the environment, and environments are created by a generator network which tries to provide an appropriate level of challenge for the agent. This is accomplished by the generator learning to make content based on estimates by the critic. Thus, this process provides an implicit curriculum for the agent, creating more complex environments over time. Unlike previous approaches to procedural content generation, Generative Playing Networks is end-to-end differentiable and does not require human-designed examples or domain knowledge. We demonstrate the capability of this framework by training an agent and level generator for a 2D dungeon crawler game.
+1. Intro
+Training strong agents requires good and diverse environments to train in, and conversely, creating environments that are good for training speciﬁc agents requires intimate knowledge of the agents. The few previous systems that have attempted to realize such a loop of agent training and environment generation have been based on heuristic methods and the environment generation process has had little information about the agent. In this paper, we propose the Generative Playing Network framework, where both the generator and the agent are implemented as neural networks and trained with gradient descent.
+1Department of Computer Science, Tandon School of Engineering, New York University, New York, USA 2OriGen.AI, New York, USA. Correspondence to: Philip Bontrager <philipjb@nyu.edu>.
+
+What we propose is a semi-supervised method for learning from a simulator to generate new environments for the given simulator. The only requirement is that it is possible to encode simulator states into environment descriptions. It is based on the premise that diverse sets of hard but solvable environments increases the potential for agent learning.
+In the Generative Playing Network framework, a generative model is tasked with creating environments for a critic from an actor-critic agent: environments that are not too difﬁcult and not to easy. The critic learns a value function during play that estimates the expected value of a given state. Between games, a generator model is updated to produce game-states that the critic estimates to be moderate challenges. This forms a natural curriculum for the agent while also producing a series of level generators at regular difﬁculties. This algorithm is fully differentiable and requires almost no domain speciﬁc knowledge.
+We demonstrate this approach in a simple 2D dungeon crawling game, part of the GVGAI suite of games. However, the general framework could be applied to many other problem classes, such as self-driving cars or system design.
+2. Related Work
+Procedural Content Generation (PCG) in games is a name for various methods that generate game content, such as maps, quests, characters or textures. In particular, procedural generation of levels of various kinds is a commonly studied research problem. This tracks an interest by the game development community, where many video games include some form of level generation (Shaker et al., 2016).
+PCG is also important to AI and in particular reinforcement learning research, because it allows for the generation of an arbitrary number of new environments. One beneﬁt automatically generating many environments is for testing as well as encouraging generalization in reinforcement trained agents; it has been found that in many cases, trained agents overﬁt to the environment they were trained on (Risi & Togelius, 2019). Several authors have tried using some form of PCG to quantify or increase generalization in reinforcement learning (Cobbe et al., 2018; Zhang et al., 2018; Justesen et al., 2019b).
+
+Generative Playing Networks
+
+Existing approaches to procedural content fall into several classes. Most commercial games rely on hand-coded, constructive approaches (Shaker et al., 2016). A popular approach is to use evolutionary algorithms or other populationbased stochastic optimizers to cast PCG as a search problem (Togelius et al., 2011). More recently, supervised and self-supervised learning has been applied to PCG. Here, a model is trained on existing game content, and can then be sampled to provide more similar content (Summerville et al., 2018). The obvious downside of such approaches is that they require training data in the form of similar game content. The less obvious downside is that the trained models might produce content that is stylistically similar to what they were trained on, but not functional. To remedy this, one can combine search-based approaches with self-supervised learning; for example, the Latent Variable Evolution technique where a generator is trained on existing content and an evolutionary algorithm is used to ﬁnd latent variables that make the generator network produce content with desirable characteristics (such as playable levels) (Bontrager et al., 2018; Volz et al., 2018). Very recently, the use of reinforcement learning for generating game content has been proposed and demonstrated (Khalifa et al., 2020). Just like the search-based methods, PCG via RL requires a quality metric to be used for a reward function, but moves the computation from inference to training time.
+Assuming that a PCG method uses some kind of objective or reward function, the question remains what to reward or search for. One answer is learnability. By including a learning algorithm in the evaluation function, levels can be optimized for learning potential (Togelius & Schmidhuber, 2008). However, such a procedure is computationally very costly. Another perspective is that of the POET system, which attempts to achieve open-ended learning by keeping a population of environments/levels and searching for new ones that are of appropriate difﬁculty for the agents (Wang et al., 2019).
+The system described here differs in several ways from the previously proposed systems. First, it’s fully differentiable and the level generator is updated with gradient descent directly based on the performance of the agent. This sets it apart from other systems where generators are based on search, and also from the recent PCG via RL paradigm where a non-differentiable reward function is used. The system also differs in the goal of the environment generator, which is to produce diverse levels of appropriate difﬁculty for the current agent, assuming that both the generator and the agent will keep developing in tandem.
+3. Generative Playing Networks
+Generative Playing Networks (GPNs) are a symbiotic relationship between three models, an environment generator G,
+
+an environment agent policy π, and an environment value estimator Q. Each model is a differentiable function with parameters φ, θ, and ω, respectively. G is a generator function with the objective of mapping some noise input, z, from the distribution pz to the space of environment states that are reasonably solvable by the agent. The agent is an actorcritic model consisting of both π and Q. The policy, π, maps the environment state, S, from the distribution of possible environment states for a simulator, pstates, to a discrete distribution of the actions available. The state-action utility estimator, Q, is trained to estimate the expected value for each possible action given the current state. The expected value for state S can then be calculated as the weighted average of the expected values for each possible action the agent could take, as given in equation 1.
+
+A
+
+U (s) = π(s, a) × Q(s, a)
+
+(1)
+
+a
+
+With a deﬁnition for calculating the utility of a state, the game between the agent and generator can now be deﬁned. This game is similar in nature to that from Generative Adversarial Networks (Goodfellow et al., 2014), except the relationship between the agent and generator can be described as both cooperative and adversarial. The agent is attempting to learn a policy that maximizes its utility, while the generator is attempting to create environments that challenge the agents policy and that dont result in optimal outcomes. We can thus control the agent and the quality of the generated content through controlling the reward that the agent receives. With a negative total reward for losing and a positive one for winning, the agent will be trying to maximize its reward while the generator will target environments with an estimated utility of 0 as deﬁned in equation 2.
+
+min
+G
+
+max
+U
+
+V
+
+(G,
+
+U
+
+)
+
+=Es∼pstates(s)[U (s)]+
+
+(2)
+
+Ez∼pz(z)[U (G(z))2].
+
+The reason we refer to this relationship as symbiotic, is that the agent and the generator initially cooperate as the agent mostly gets negative rewards in the beginning. The generator will be searching for environment designs that result in higher rewards until it starts generating environments that the agent can succeed in. At this point the agent is receiving positive rewards, and the generator is searching for more challenging environments to lower the total utility, this is where they start competing. The generator is providing a curriculum for the agent while the agent is providing a complexity measure for the generator.
+
+We then hypothesize that the generated environments will go from, simplistic, to interesting for humans, to unrealistically challenging if the agent is able to gain superhuman performance. Once the algorithm reaches the interesting for humans stage, it can be stopped and the generator can be
+
+Generative Playing Networks
+
+G Staten
+
+πQ E
+Staten
+
+Agent Loop
+Actionn Rewardn
+
+Environment Simulator
+Reward Win: 1 - n/N Loss: -1 + n/N Else: 0
+
+Select New Environment When Terminal
+
+Recycle Viable, Challenging, Environments
+Update Environments
+
+Generator Loop
+Expected Value * πQ
+E
+
+Diversity Loss
+
+Target Value Loss
+
+Reconstruction Loss
+
+Staten+1
+
+G
+
+Figure 1. Generative Playing Networks consist of two primary loops; the agent loop and the generator loop. In the agent loop, the agent plays episodes of both human made and generated environments. It is learning to estimate the expected total reward from a given state, given the current policy, while also learning an optimal policy for each environment. The generator loop updates the generator to create challenging environments given the agent’s current abilities. The dashed lines represent update loops that are not part of the core algorithm but which help to stabilize training.
+
+used for sampling many possible acceptable environments or it can be searched, via Latent Variable Evolution (Bontrager et al., 2018; Volz et al., 2018) for even more speciﬁc environments. An overview of the algorithm is given in ﬁgure 1 and is deﬁned in full in algorithm 1.
+3.1. Agent Training Loop
+3.1.1. REINFORCEMENT LEARNING
+As already discussed, the agent is trained in an reinforcement learning based, actor-critic, setting. It is important to have both an actor and a critic in order to properly estimate the expected value of a state. To learn an optimal policy we use advantage actor-critic, as the advantage function has been shown recently to be an effective and stable way to update the actor in many situations (Mnih et al., 2016; Justesen et al., 2019a). The advantage of an action is simply the difference in value between the new state and the old state. The critic is then typically updated incrementally based on temporal difference (TD) learning (Sutton & Barto, 2018). Since were using the agent to evaluate environments, we cannot simply use the standard critic update.
+The agent is used for evaluating environment designs, and as such, it is important that the agent can provide a usable utility for every state of a simulation. In a TD update, the value of state St is given as U (St) = R(St) + γU (St+1) where γ is the discount on future rewards. If γ < 1, then
+
+the reward will only be able to propagate a few seconds backwards in time in a high frame-rate environment. With any discount, very little, to no reward from winning or losing would propagate to the beginning of an episode. The agent would not be able to evaluate generated environments as they are equivalent to the environment state at time zero. Thus, for the agent to evaluate environment designs, γ = 1.
+This is problematic as it is very difﬁcult to train an agent without discounting future rewards. There is very little pressure for the agent to ﬁnd an optimal path, as all possible paths to a reward have the same utility unless there is a stochastic element and the chance of failing increases the longer an agent does not ﬁnish its task. We propose to instead explicitly learn the expected value of a state as outlined in equation 1.
+In actor-critic, the algorithm is trying to maximize the function (Sutton & Barto, 2018):
+
+N
+U π(S) = E[ γnR(Sn)]
+
+n=0
+
+N
+
+= E[γnR(Sn)]
+
+(3)
+
+n=0
+
+N
+= γnE[R(Sn)]
+
+n=0
+
+Generative Playing Networks
+
+Algorithm 1 Generative Playing Networks (Optional components in blue)
+
+Input: Differentiable policy πθ(a|S), utility function
+Qω(a|S), encoder Eψ(S), and state generator Gφ(z). Algorithm parameters: απ : 2.5e − 4, αQ : 2.5e − 5, αR : 5e − 5, αG : −4, m : 128, policyupdates : 1m,
+
+generator updates: 10, diversity updates: 90, pre-training
+
+steps: 20m
+
+Extensions: update model every n steps (n=5), train with
+
+small entropy, train with 16 parallel workers, 30% of elite
+
+envs kept, human envs sampled 50% of episodes
+
+Initialize weights and pre-train agent
+
+repeat
+
+z ∼ minibatch m from pz(z) S ← Gφ(z) Create new environments from generated states
+
+Keep top k levels from previous loop {see 3.1.3}
+
+for number of policy updates do
+
+Select environment
+
+S ← initialize environment
+
+H ← Eψ(S) repeat
+
+A ∼ πθ(·|H) Take action A, observe R, S {see equation 5}
+
+H ← Eψ(S ) V ← πθ(·|H ) · Qω(·|H ) {If S is terminal, 0} δ ← R + V − Qω(A|H) V ← πθ(·|H) · Qω(·|H) + πθ(A|H) · δ Adv ← V − V {If S is terminal, R − V } ω, ψ ← ω, ψ + αQδ2∇Qω(A|Eψ(S)) θ, ψ ← θ, ψ + απAdv∇ log πθ(A|Eψ(S)) Rec ← − c Sc log Gφ(Eψ(S))c φ, ψ ← φ, ψ + αRRec∇Gφ(Eψ(S)) H ←H
+
+until S is terminal
+
+for number of generator updates do
+
+z ∼ minibatch m from pz(z)
+
+H ← Eψ(Gφ(z))
+
+V ← πθ(·|H) · Qω(·|H)
+
+φ
+
+←
+
+φ
+
++
+
+αG
+
+V2 m
+
+∇G
+
+πθ
+
+(·|Eψ
+
+(Gφ
+
+(z))
+
+·
+
+Qω (·|Eψ (Gφ (z )))
+
+end for
+
+for number of diversity updates do
+
+z ∼ minibatch m from pz(z)
+
+H ← Eψ(Gφ(z))
+
+D
+
+←
+
+(Ha −Hb )2 m
+
+for
+
+m
+
+random
+
+pairings
+
+of
+
+Hi
+
+φ ← φ + αGD∇GEψ(Gφ(z)
+
+end for
+
+end for
+
+until Acceptable environments are being generated
+
+The gradient-based updates can use any standard gradient-
+
+based learning rule. We used Adam in our experiments.
+
+St is a random variable and the expectation of the total utility is equivalent to the expectation of the reward at each state. In a typical TD update, the Q function learns this expected value through small updates, basically keeping a running average. This then requires many visits to a state to learn the true expectation of R(St) , and many more to learn the true utility when γ = 1. Since we know the policy distribution, we can calculate
+
+A
+
+E[R(Sn)] = p(S, a) · E[R(Sna+1)].
+
+(4)
+
+a
+
+Then the expectation of Sta+1 can be represented by Q and the probability of an action is π.
+Algorithm 1 outlines the update step as variable V . By bootstrapping the expected reward from the policy function, the agent can more easily learn it. In practice, the agent should also be more likely to learn the optimal path. Policy functions are almost never 100% certain about an action and thus taking multiple steps will naturally discount a future reward from the longer route due to the small uncertainty the policy holds.
+While not the main focus of the work, this approach also seems like it might be less sensitive to the scale of environment rewards. There is no discount factor that needs to be tuned to match the scale of the rewards to make sure the reward can propagate far enough back in time.
+
+3.1.2. AGENT REWARD
+For the game, laid out in equation 2, to work, the agent cannot be allowed to learn from the environment simulator’s natural rewards. Instead the simulator’s rewards should be captured and the agent simply given a reward for winning or losing. In its purest form, this approach is environment independent with 1 point for winning and -1 point for losing. The agent is able to pursue an expected reward of 1 while the generator is able to try and keep the agent’s expected reward at 0. To provide the agent with further feedback, and distinguish between easy and hard environments, we added a penalty/bonus for how long the agent takes to succeed/fail at its task. This is a value between 0 and 1, meaning the range of possible rewards is R ∈ [−1, 1]. The algorithm rewards are given in equation 5.
+
+1 
+
+−
+
+n N
+
+,
+
+
+
+R(Sn)
+
+=
+
+−1 + −1,
+
+n N
+
+,
+
+
+
+
+
+0,
+
+if agent wins if agent loses if environment does not compile else
+
+(5)
+
+If the environment is too difﬁcult to learn in this restricted
+
+reward setup, it can be modiﬁed to allow more frequent
+
+Generative Playing Networks
+
+rewards. One modiﬁcation, that is still domain agnostic,
+
+is to scale the reward for winning and losing by two, and
+
+then provide a reward of
+
+1 N
+
+anytime the
+
+environment
+
+tries
+
+to return a reward. This way a positive score is still only
+
+achievable by winning and the environment is able to help
+
+the agent with more frequent rewards. The generator will
+
+also be able to target these rewards as well when learning to
+
+make levels with a given expected value. If necessary, the
+
+win and loss rewards could be further scaled and custom
+
+rewards could be used for a given domain. This is one way
+
+that domain knowledge could be added into this approach.
+
+3.1.3. ENVIRONMENT SELECTION
+During the agent update loop, the agent will play one episode of a environment and then randomly select a new environment from the mini-batch of environments generated. The agent will keep re-sampling from the given minibatch until it has completed a speciﬁed number of updates and then the generator will be updated and the minibatch of levels will be replaced with a new set.
+To assist with training, two methods can be used with the standard selection; pretraining and elitism. With pretraining, the agent can only select from a curated set of well designed environments until the agent has learned to solve them. This gives the generator a valid direction to learn from at the beginning, otherwise it is essentially generating random environments at the beginning.
+The second assistance comes from an elitism mechanism that keeps the most useful environments around. There are two components to this elitism. The ﬁrst is to assume that the hand-curated environments are elite in nature and to re-sample them periodically after the pretraining stage. The second is to persist environments that the agent is still learning to play.
+After the agent has ﬁnished its update loop, the environments can be ranked according to the average reward the agent received. Any environment with a positive reward is ranked higher than one with a negative reward as it is conﬁrmed the environment is solvable. Within those two groups, a higher reward is better when the score is negative and a lower reward is better when it is positive. Once the environments are ranked, the top ones are kept based on a speciﬁed percentage of environments to recycle each time.
+
+3.1.4. STATE RECONSTRUCTION
+To give the generated environments a more human-designed appearance, the generator can also learn directly from the curated environments. This is done during the agent loop as well. When the agent encodes the state, this encoding can be passed into the generator, as a latent variable, and the generator can be tasked with reconstructing the input exactly
+
+as an autoencoder. For this reason, we actually deﬁne the agent as three networks: a policy network, a utility network, and an encoder network that encodes the state and feeds into the ﬁrst two networks.
+It has been found through work on adversarial examples for classiﬁers, that random noise can cause a network to activate in the same way as the natural images it is trained on (Nguyen et al., 2015). For this reason, if the gradients of a classier are used to generate an input that would maximally activate the classiﬁer, the most likely outcome is a random pattern (Nguyen et al., 2016). Training the generator to also be a decoder should predispose it to generate content similar in structure to human designs.
+We do not put any constraints on the output of the encoder network, so the generator network is likely learning two separate tasks for two different input distributions. This allows the two tasks to not interfere with each other, while still affecting each other. One could train the decoder as a variational autoencoder to have generating and decoding have the same inputs (Kingma & Welling, 2014).
+3.2. Generator Loop
+The generator loop simply consists of updating the generator to create environments with an expected value of 0. The generator is updated by sampling a minibatch of m random latent variables and mapping them to environments which are evaluated by the agent. The generator’s weights are then updated. This can be repeated a few times but too many updates have been found to be detrimental to the generator’s diversity.
+3.2.1. DIVERSITY UPDATE
+To help combat the collapse of diversity, a proposed extension for the main algorithm is to update the network a few times explicitly with the goal of increasing diversity. Here, similarity is calculated as the L2 difference between the encoding values of two environments. Environments from a minibatch are randomly paired and their similarities calculated. Since every two environments in a minibatch are independently generated, one can simply compare every other sample for similarity. The network is then updated to maximize the average distance between samples. It was found that it is most effective to do the diversity update separate from the primary update target.
+4. Experiments
+To validate the algorithm proposed here, we test Generative Playing Networks on Zelda from the General Video Game AI (GVGAI) framework (Perez-Liebana et al., 2019). GVGAI is based on the Video Game Description Language (VGDL) which is a language for describing video games
+
+Generative Playing Networks
+
+Figure 2. Zelda from the GVGAI framework is a simple dungeon crawler. To beat a level, the player has to collect the key and open the door while not being killed by any monster. The player has the ability to kill monsters too.
+mostly within the family of arcade games. There is a large corpus of simple games written for this language with each game deﬁnition also describing the set of level designs that can exist for it. The framework has been used extensively as a test-bed for game and level PCG research. GVGAI also has an OpenAI gym interface for interfacing with reinforcement learning algorithms (Torrado et al., 2018; Brockman et al., 2016).
+This is a perfect test-bed for Generative Playing Networks, the agent receives the game-state as a tile representation of the game, where each tile is a one-hot vector of the object in a given location. The generator can create this tile representation state which can be directly converted to a level map for the environment to load. If a level does does not have an avatar or a key or a door it does not compile, and is presented to the agent as an instant loss after one frame. All ﬁve available human levels for this game are shown in ﬁgure 2, though some are partially obscured.
+We train Generative Playing Networks on this game and each environment/level with the objective of getting interesting new levels. We also evaluate the effect of each of the stabilizing features on the outcome. Below we detail some of the experiment parameters. The rest of the parameters we used can be found in algorithm 1.
+4.1. Model Architectures
+The levels being generated for the experiment are 12 by 16 tiles by a one-hot encoding of 14 possible objects. Since VGDL explicitly states which states are acceptable for a level design we optimize slightly by hard coding zeros for the objects that are not allowed for a level design e.g. an object that must be spawned ﬁrst. Another approach we could have taken would have been to let the level design
+
+compiler automatically select a blank tile when an object is not possible.
+It was found that the level style was fairly susceptible to the up-sampling choice for the architecture of the generator. We got good results with nearest-neighbor upsampling, with transposed convolutions, and with sub-pixel convolutions (Radford et al., 2015; Shi et al., 2016). We chose to do all our experiments with sub-pixel convolutions as it was our favorite aesthetically.
+Our generator model consists of a fully connected layer that expects a latent vector, of size 512, sampled from a standard normal distribution and transforms it to an output of 3 by 4 by 512. This is processed through two convolutional layers, with kernels of size three, before being passed through a dropout layer and then transformed with a sub-pixel convolution layer to double the output size. This convolution and upsampling is repeated until the expected output size is reached. Each layer contains 512 ﬁlters and LeakyReLu is used as the activations. The ﬁnal output is passed through a Softmax activation to better learn the one-hot encoding. We found that the dropout layer is another helpful tool in maintaining diverse results.
+For the agent, we use a nine layer residual network (He et al., 2016) followed by a gated recurrent unit. The encoded state is a vector of size 512. The policy and utility function are each a single, fully connected layer.
+5. Results
+Figure 3 is a random selection of GVGAI Zelda levels generated after training on the game for 50 million frames, before the results collapse. Of the six levels visible in the ﬁgure, four of them would be considered playable, one compilable but not playable, and one would be considered a failure.
+Looking closely at these results, it’s clear that the generator learned to emulate the general style of the provided examples but that it’s outputs are all unique. The generated levels are mostly open levels with few enemies. All of the playable levels would be considered very simple for a human player. It is understandable that the levels are mostly open, as the agent likely struggled to tell the difference between solvable and unsolvable maze-like environments.
+During the agent loop of Generative Playing Nets, the second level in ﬁgure 3 would be considered playable. That is because, to avoid needing domain knowledge, the algorithm relies on the environment compiler to either crash or send an error if a design is not viable. Examples like this, where the compiler allows it, but it is not solvable, should eventually be avoided by the algorithm since the agent cannot achieve an acceptable score. And indeed, most of the examples do not have this problem. To further discourage this, one could
+
+Generative Playing Networks
+
+Figure 3. Random Selection of Generated GVGAI Zelda Levels
+
+add domain speciﬁc rules to automatically mark environments as unsolvable and they would be treated the same as a crashed environment.
+While we were successfully able to train a generator network to create new GVGAI Zelda levels with only ﬁve example levels and no domain knowledge, we were only able to learn simple levels. This suggests the agent never learned a truly general policy as it could otherwise quickly beat these levels and the generator would have to learn to make more challenging levels to lower the agent’s average.
+5.1. Ablation Tests
+Table 1 lists a few experiments we did to determine the effect of each addition to the core algorithm. The table reports a few quantitative metrics as well as our key observation from looking at the generated output.
+The feature that seemed to make the least difference was pretraining. The results seem to be identical, which seems to suggest that with a long enough agent update loop, pretraining is not that important. In earlier experiments it had been shown to be helpful, but the agent was only being updated for a 100k steps, instead of 1m here.
+Diversity loss also did not seem to have a large effect. We have found that diversity helps get the generator out of local minima and achieve overall lower loss. Though, with the addition of dropout in the generator, the effect is smaller.
+The other experiments did not have the best results, but there were interesting side effects to removing some of the components, and they could be desirable. Removing reconstruction and elitism each caused diversity get much higher. This gave interesting new designs, but also lots of noise as the agents were given no prior to base their designs on. The higher diversity likely also leads to the agent never learning to perform well in these experiments.
+5.2. Curriculum
+One of the ways in which the generator and agent work together is that the generator should provide a curriculum for the agent to learn from easy levels and then improve. What our results seem to indicate though, is that the generator ﬁrst generates complex, unsolvable, designs. Then it generates
+
+simple solvable designs and ﬁnally very easy designs. This is demonstrated from left to right in ﬁgure 4.
+
+Figure 4. Three sample generated levels chosen from early in the learning process to late in the process to show how the generator learns to match the agent’s skill.
+
+Figure 5 shows that the generator has learned to successfully keep the agent at a reward of 0. Therefore the curriculum we’re seeing is from the collaborative half of the algorithm. If the agent is continuously improving, the levels should be getting more difﬁcult according to ﬁgure 5.
+
+Reward
+
+0.4
+
+0.2
+
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1.0
+
+10m
+
+2T0rmaining St3e0pms
+
+40m
+
+50m
+
+Figure 5. Real average rewards of generated environments converging toward their estimated target.
+
+5.3. Agent Results
+We also include here two metrics to show that the agent is learning what it is intended to learn. Figure 6 shows a plot of the agent’s estimated level value, only from frame 0, versus each level’s actual reward at the end of the episode. It’s clear that the agent’s estimates closely track the agent’s actual rewards meaning that it’s learning accurately. Though there is much less variance in the estimates than in the real
+
+Generative Playing Networks
+
+Table 1. Analysis of the generator performance without each of the algorithm additions. Successful outcomes for the various metrics are in bold.
+
+EXPERIMENT FULL ALGORITHM NO PRE-TRAINING NO RECONSTRUCTION NO DIVERSITY LOSS NO ELITISM
+
+REWARDS −1.8 × 10−2 −1.1 × 10−2
+−3.3 × 10−1
+−2.3 × 10−2 −3.9 × 10−1
+
+GENERATOR LOSS
+1.2 × 10−1 1.4 × 10−1
+4.9 × 10−1
+1.2 × 10−1 2.1 × 10−1
+
+DIVERSITY 2.9 × 10−3 2.5 × 10−3
+4.9 × 10−2
+3.0 × 10−3 2.6 × 10−1
+
+FAILED ENVIRONMENTS
+11% 12%
+26%
+26% 7%
+
+OBSERVATIONS
+SUCCESSFUL RESULTS NEEDED WHEN FEW RL
+UPDATES OR NO ELITISM
+NO BORDERS, NOT MAZE-LIKE STRUGGLES TO EXPLORE
+NEW DESIGNS
+UNSTABLE, NOISY ENVS
+
+Reward Value Estimates
+Failed Environments (%)
+
+values, this either is reﬂecting that the estimates are not affected by the stochastic environment or that the estimates are only accurate for the most average levels. Figure 7
+
+0.0
+
+Real Reward
+
+Initial State Estimate
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1.00m
+
+10m
+
+2T0rmaining Ste30pms
+
+40m
+
+50m
+
+0.30
+
+Value Estimates Failed Environments
+
+35
+
+30 0.35
+
+25
+
+0.40
+
+20
+
+0.45
+
+15
+
+10
+
+0.50
+
+0m
+
+10m
+
+T20ramining St3e0pms
+
+40m
+
+50m
+
+Figure 7. Percentage of failed, uncompilable, environments vs estimated value for the failed environments. As there are less failures, the agent does not accurately value these environments
+
+Figure 6. Agent initial state value estimate in red vs real level reward in blue.
+instead shows where the agent’s estimates are failing. In the early stages of training, the agent is correctly estimating that impossible-levels have a value of -1, but as it encounters less of them (the red line) it starts to value them higher (the blue line). This either means that later impossible-levels are more exotic and unique, or, more likely, that the agent is forgetting after millions of updates.
+6. Conclusion
+Generative Playing Networks is a novel framework for procedural content generation informed by the behavior and value estimates of a learning agent. The method requires very little data, nor domain knowledge, but is computationally intensive. The process is fully differentiable, allowing the agent to directly communicate with the generator about what designs it “wants”.
+In this paper, we have introduced an algorithm with a reward
+
+system based around complexity and an RL update rule that allows for efﬁcient value estimates. The framework can also allow for richer and more interesting reward functions based around the agent’s interactions with the environment.
+Software and Data
+The Code Base for all these experiments can be found here: https://github.com/pbontrager/ GenerativePlayingNetworks
+Acknowledgements
+We would like to acknowledge Ahmed Khalifa for helpful discussions.
+
+Generative Playing Networks
+
+References
+Bontrager, P., Roy, A., Togelius, J., Memon, N., and Ross, A. Deepmasterprints: Generating masterprints for dictionary attacks via latent variable evolution. In 2018 IEEE 9th International Conference on Biometrics Theory, Applications and Systems (BTAS), pp. 1–9. IEEE, 2018.
+Brockman, G., Cheung, V., Pettersson, L., Schneider, J., Schulman, J., Tang, J., and Zaremba, W. Openai gym. arXiv preprint arXiv:1606.01540, 2016.
+Cobbe, K., Klimov, O., Hesse, C., Kim, T., and Schulman, J. Quantifying generalization in reinforcement learning. arXiv preprint arXiv:1812.02341, 2018.
+Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., Courville, A., and Bengio, Y. Generative adversarial nets. In Advances in neural information processing systems, pp. 2672–2680, 2014.
+He, K., Zhang, X., Ren, S., and Sun, J. Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 770–778, 2016.
+Justesen, N., Bontrager, P., Togelius, J., and Risi, S. Deep learning for video game playing. IEEE Transactions on Games, 2019a.
+Justesen, N., Torrado, R. R., Bontrager, P., Khalifa, A., Togelius, J., and Risi, S. Illuminating generalization in deep reinforcement learning through procedural level generation. In AAAI Workshop on Reinforcement Learning in Games, 2019b.
+Khalifa, A., Bontrager, P., Earle, S., and Togelius, J. Pcgrl: Procedural content generation via reinforcement learning. arXiv preprint arXiv:2001.09212, 2020.
+Kingma, D. P. and Welling, M. Auto-encoding variational bayes. stat, 1050:1, 2014.
+Mnih, V., Badia, A. P., Mirza, M., Graves, A., Lillicrap, T., Harley, T., Silver, D., and Kavukcuoglu, K. Asynchronous methods for deep reinforcement learning. In International conference on machine learning, pp. 1928– 1937, 2016.
+Nguyen, A., Yosinski, J., and Clune, J. Deep neural networks are easily fooled: High conﬁdence predictions for unrecognizable images. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 427–436, 2015.
+Nguyen, A., Dosovitskiy, A., Yosinski, J., Brox, T., and Clune, J. Synthesizing the preferred inputs for neurons in neural networks via deep generator networks. In Advances in neural information processing systems, pp. 3387–3395, 2016.
+
+Perez-Liebana, D., Liu, J., Khalifa, A., Gaina, R. D., Togelius, J., and Lucas, S. M. General video game ai: A multitrack framework for evaluating agents, games, and content generation algorithms. IEEE Transactions on Games, 11(3):195–214, 2019.
+Radford, A., Metz, L., and Chintala, S. Unsupervised representation learning with deep convolutional generative adversarial networks. arXiv preprint arXiv:1511.06434, 2015.
+Risi, S. and Togelius, J. Procedural content generation: From automatically generating game levels to increasing generality in machine learning. arXiv preprint arXiv:1911.13071, 2019.
+Shaker, N., Togelius, J., and Nelson, M. J. Procedural content generation in games. Springer, 2016.
+Shi, W., Caballero, J., Husza´r, F., Totz, J., Aitken, A. P., Bishop, R., Rueckert, D., and Wang, Z. Real-time single image and video super-resolution using an efﬁcient sub-pixel convolutional neural network. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 1874–1883, 2016.
+Summerville, A., Snodgrass, S., Guzdial, M., Holmga˚rd, C., Hoover, A. K., Isaksen, A., Nealen, A., and Togelius, J. Procedural content generation via machine learning (pcgml). IEEE Transactions on Games, 10(3):257–270, 2018.
+Sutton, R. S. and Barto, A. G. Reinforcement learning: An introduction. MIT press, 2018.
+Togelius, J. and Schmidhuber, J. An experiment in automatic game design. In 2008 IEEE Symposium On Computational Intelligence and Games, pp. 111–118. IEEE, 2008.
+Togelius, J., Yannakakis, G. N., Stanley, K. O., and Browne, C. Search-based procedural content generation: A taxonomy and survey. IEEE Transactions on Computational Intelligence and AI in Games, 3(3):172–186, 2011.
+Torrado, R. R., Bontrager, P., Togelius, J., Liu, J., and PerezLiebana, D. Deep reinforcement learning for general video game ai. In 2018 IEEE Conference on Computational Intelligence and Games (CIG), pp. 1–8. IEEE, 2018.
+Volz, V., Schrum, J., Liu, J., Lucas, S. M., Smith, A., and Risi, S. Evolving mario levels in the latent space of a deep convolutional generative adversarial network. In Proceedings of the Genetic and Evolutionary Computation Conference, pp. 221–228, 2018.
+
+Generative Playing Networks
+Wang, R., Lehman, J., Clune, J., and Stanley, K. O. Poet: open-ended coevolution of environments and their optimized solutions. In Proceedings of the Genetic and Evolutionary Computation Conference, pp. 142–151, 2019.
+Zhang, C., Vinyals, O., Munos, R., and Bengio, S. A study on overﬁtting in deep reinforcement learning. arXiv preprint arXiv:1804.06893, 2018.
+

@@ -1,0 +1,72 @@
+
+Donate to arXiv
+
+Please join the Simons Foundation and our generous member organizations in supporting arXiv during our giving campaign September 23-27. 100% of your contribution will fund improvements and new initiatives to benefit arXiv's global scientific community.
+DONATE
+
+[secure site, no need to create account]
+Skip to main content
+Cornell University
+We gratefully acknowledge support from
+the Simons Foundation and member institutions.
+arXiv.org > cs > arXiv:2002.05259
+
+Help | Advanced Search
+Search
+Download PDF
+Computer Science > Artificial Intelligence
+Title: Fully Differentiable Procedural Content Generation through Generative Playing Networks
+Authors: Philip Bontrager , Julian Togelius
+(Submitted on 12 Feb 2020)
+
+    Abstract: To procedurally create interactive content such as environments or game levels, we need agents that can evaluate the content; but to train such agents, we need content they can train on. Generative Playing Networks is a framework that learns agent policies and generates environments in tandem through a symbiotic process. Policies are learned using an actor-critic reinforcement learning algorithm so as to master the environment, and environments are created by a generator network which tries to provide an appropriate level of challenge for the agent. This is accomplished by the generator learning to make content based on estimates by the critic. Thus, this process provides an implicit curriculum for the agent, creating more complex environments over time. Unlike previous approaches to procedural content generation, Generative Playing Networks is end-to-end differentiable and does not require human-designed examples or domain knowledge. We demonstrate the capability of this framework by training an agent and level generator for a 2D dungeon crawler game. 
+
+Comments: 	8 pages, 7 figures
+Subjects: 	Artificial Intelligence (cs.AI) ; Machine Learning (cs.LG)
+Cite as: 	arXiv:2002.05259 [cs.AI]
+  	(or arXiv:2002.05259v1 [cs.AI] for this version)
+Bibliographic data
+[ Enable Bibex  ( What is Bibex? )]
+Submission history
+From: Philip Bontrager [ view email ]
+[v1] Wed, 12 Feb 2020 22:07:23 UTC (1,228 KB)
+Full-text links:
+Download:
+
+    PDF
+    Other formats
+
+( license )
+Current browse context:
+cs.AI
+< prev  |  next >
+new  | recent  | 2002
+Change to browse by:
+cs
+cs.LG
+References & Citations
+
+    NASA ADS
+    Google Scholar
+    Semantic Scholar
+
+Export citation
+Bookmark
+BibSonomy logo Mendeley logo Reddit logo ScienceWISE logo
+Which authors of this paper are endorsers? | Disable MathJax ( What is MathJax? ) Browse v0.2.7 released 2019-12-16    Feedback?
+
+    About arXiv
+    Leadership Team
+
+    contact arXiv Click here to contact arXiv Contact
+    arXiv Twitter arXiv Twitter Follow us on Twitter
+
+    Help
+    Privacy Policy
+
+    Blog
+    Subscribe
+
+arXiv® is a registered trademark of Cornell University.
+
+If you have a disability and are having trouble accessing information on this website or need materials in an alternate format, contact web-accessibility@cornell.edu for assistance.
